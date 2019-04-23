@@ -98,7 +98,13 @@ app.route('/articles/:articleTitle')
 })
 
 .delete((req, res) => {
-    Article.deleteOne();
+    Article.deleteOne({title: req.params.articleTitle}, (err) => {
+        if (!err) {
+            res.send("Successfully deleted the article");
+        } else {
+            res.send(err);
+        }
+    });
 });
 
 /////TARGETING SPECIFIC ARTICLE ROUTES/////////
