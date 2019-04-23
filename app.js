@@ -14,16 +14,28 @@ mongoose.connect("mongodb://localhost:27017/wikiDB" , {useNewUrlParser: true});
 
 app.get('/articles', (req, res) => {
     Article.find({}, (err, results) => {
-
+        if (!err) {
+            res.send(results);
+        } else {
+            res.send(err);
+        }
     });
 });
 
+app.post('/articles', (req, res) => {
+    const newArticle = new Article({
+        title: req.body.title,
+        content: req.body.content
+    });
 
-
-
-
-
-
+    newArticle.save((err) => {
+        if (!err) {
+            res.send('Successfully added a new article!');
+        } else {
+            res.send(err);
+        }
+    });
+});
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server started on port 3000");
