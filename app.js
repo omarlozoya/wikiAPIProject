@@ -68,12 +68,37 @@ app.route('/articles/:articleTitle')
     });
 })
 
-.post((req, res) => {
+.put((req, res) => {
+    Article.update(
+        {title: req.params.articleTitle},
+        {title: req.body.title, content: req.body.content},
+        {overwrite: true},
+        (err) => {
+            if (!err) {
+                res.send('Successfully updated Article!');
+            } else {
+                res.send(err);
+            }
+        }
+    );
+})
 
+.patch((req, res) => {
+    Article.update(
+        {title: req.params.articleTitle},
+        {$set: req.body},
+        (err) => {
+            if (!err) {
+                res.send('Successfully updated article');
+            } else {
+                res.send(err);
+            }
+        }
+    )
 })
 
 .delete((req, res) => {
-
+    Article.deleteOne();
 });
 
 /////TARGETING SPECIFIC ARTICLE ROUTES/////////
