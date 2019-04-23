@@ -12,6 +12,8 @@ app.use(express.static('public'));
 
 mongoose.connect("mongodb://localhost:27017/wikiDB" , {useNewUrlParser: true});
 
+/////TARGETING ARTICLE ROUTES/////////
+
 app.route('/articles')
 
 .get((req, res) => {
@@ -48,6 +50,34 @@ app.route('/articles')
         }
     });
 });
+
+/////TARGETING ARTICLE ROUTES/////////
+
+
+/////TARGETING SPECIFIC ARTICLE ROUTES/////////
+
+app.route('/articles/:articleTitle')
+
+.get((req, res) => {
+    Article.findOne({title: req.params.articleTitle}, (err, foundArticle) => {
+        if (foundArticle) {
+            res.send(foundArticle);
+        } else {
+            res.send('No articles matching that title were found!');
+        }
+    });
+})
+
+.post((req, res) => {
+
+})
+
+.delete((req, res) => {
+
+});
+
+/////TARGETING SPECIFIC ARTICLE ROUTES/////////
+
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server started on port 3000");
