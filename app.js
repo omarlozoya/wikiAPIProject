@@ -12,7 +12,9 @@ app.use(express.static('public'));
 
 mongoose.connect("mongodb://localhost:27017/wikiDB" , {useNewUrlParser: true});
 
-app.get('/articles', (req, res) => {
+app.route('/articles')
+
+.get((req, res) => {
     Article.find({}, (err, results) => {
         if (!err) {
             res.send(results);
@@ -20,9 +22,9 @@ app.get('/articles', (req, res) => {
             res.send(err);
         }
     });
-});
+})
 
-app.post('/articles', (req, res) => {
+.post((req, res) => {
     const newArticle = new Article({
         title: req.body.title,
         content: req.body.content
@@ -35,9 +37,9 @@ app.post('/articles', (req, res) => {
             res.send(err);
         }
     });
-});
+})
 
-app.delete('/articles', (req, res) => {
+.delete((req, res) => {
     Article.deleteMany((err) => {
         if (!err) {
             res.send('Successfully deleted all articles!');
