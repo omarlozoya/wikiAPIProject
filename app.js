@@ -2,13 +2,14 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
-const Article = require('./models/articles')
+const Article = require('./models/articles');
+const axios = require('axios');
 
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static('public'));
+app.use(express.static(__dirname + 'public'));
 
 mongoose.connect("mongodb://localhost:27017/wikiDB" , {useNewUrlParser: true});
 
@@ -108,6 +109,72 @@ app.route('/articles/:articleTitle')
 });
 
 /////TARGETING SPECIFIC ARTICLE ROUTES/////////
+
+
+/////TARGETING WIKI RESTful API ROUTES USING AXIOS/////////
+
+app.get('/WikiArticles/:title', async (req, res) => {
+    let results;
+
+    results = await getWikiApi(req.params.title);
+
+    res.send(results);
+
+    // try {
+    //     await axios.get('https://en.wikipedia.org/api/rest_v1/page/title/' + req.params.title, ({
+    //         params: {
+    //             'Api-User-Agent': 'omarlozoya@ymail.com' 
+    //         }
+    //     })).then(await function(response) {
+    //         //console.log(respone.data);
+    //         results = response;
+    //     });
+    // } catch (error) {
+    //     console.log(error.response);
+    // }
+
+    // await res.status(200).send(results);
+    
+    // const data = await axios.get('https://en.wikipedia.org/api/rest_v1/page/title/' + req.params.title, ({
+    //     params: {
+    //         'Api-User-Agent': 'omarlozoya@ymail.com' 
+    //     }
+    // })).then(function (response) {
+    //     console.log(response.data);
+    //     return res.status(200).send(response.data);
+    // }).catch(function (error) {
+    //     console.log(error);
+    //     return res.send(error);
+    // });
+
+    // return data;
+});
+
+async function getWikiApi(name) {
+    let data; 
+    
+    await axios.get('https://en.wikipedia.org/api/rest_v1/page/html/' + name, {params: { 'Api-User-Agent': 'omarlozoya@ymail.com' }})
+
+    .then(response => {
+        data = response.data;
+    })
+    
+    .catch(error => {
+        // console.log(error);
+    });
+
+    return data;
+}
+
+async function getArticles() {
+    let articles;
+
+    await axios.get('http://localhost:3000/articles').then(response => { articles = response.data }).catch(error => {console.log(error)});
+
+    return articles;
+}
+
+/////TARGETING WIKI RESTful API ROUTES USING AXIOS/////////
 
 
 app.listen(process.env.PORT || 3000, () => {
